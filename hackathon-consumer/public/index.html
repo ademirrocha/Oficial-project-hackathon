@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chat Socke-io</title>
+
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.0/socket.io.js"></script>
+
+	<style type="text/css" href="./styles.css"></style>
+
+</head>
+<body>
+
+	<form id="chat">
+		<input type="text" name="username" placeholder="Seu Nome">
+		<div class="messages"></div>
+		<input type="text" name="message" placeholder="Digite a mensagem">
+		<button type="submit">Enviar</button>
+		
+	</form>
+
+	<script type="text/javascript">
+		var socket = io('http://localhost:3000')
+
+		// let's assume that the client page, once rendered, knows what room it wants to join
+		var room = "real_time";
+
+		socket.on('connect', function() {
+		   // Connected, let's sign-up for to receive messages for this room
+		   socket.emit('room', room);
+		});
+
+		function renderMessage(message){
+			$('.messages').append('<div class="message"><strong>Sensor: '+
+				message.value.sensor+
+				'</strong> '+
+				'latitude:' + message.value.latitude +
+    			" - longitude:" + message.value.longitude +
+			    ' - frequency:' + message.value.frequency +
+			    ' - volume:' + message.value.volume +
+				'</div>')
+		}
+
+		socket.on('previousMessages', function(messages){
+			for(message of messages){
+				renderMessage(message)
+			}
+		})
+
+		socket.on('receivedMessage', function(message){
+			renderMessage(message)
+		})
+
+		$('#chat').submit(function(event) {
+			event.preventDefault()
+
+			var author = $('input[name=username]').val()
+			var message = $('input[name=message]').val()
+
+
+			if(author.length && message.length){
+				
+				var messageObject = {
+					author: author,
+					message: message
+				}
+
+				renderMessage(messageObject)
+
+				socket.emit('sendMessage', messageObject)
+				$('input[name=message]').val('')
+			}
+
+		})
+
+	</script>
+
+</body>
+</html>
