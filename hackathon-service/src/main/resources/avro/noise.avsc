@@ -1,0 +1,65 @@
+{
+  "name": "NoiseSensor",
+  "type": "record",
+  "namespace": "br.com.basis.hackathon.domain.avro",
+  "fields": [
+    {
+      "name": "requesttime",
+      "type": {
+        "type": "long",
+        "format_as_time": "unix_long",
+        "arg.properties": {
+          "iteration": {
+            "start": 1,
+            "step": 10
+          }
+        }
+      }
+    },
+    {
+      "name": "latitude",
+      "type": {
+        "type": "double",
+        "arg.properties": {
+          "range": {"min": -16.0, "max": -15.8}
+        }
+      }
+    },     
+    {
+      "name": "longitude",
+      "type": {
+        "type": "double",
+        "arg.properties": {
+          "range": {"min": -46.2, "max": -46.0}
+        }
+      }
+    },    
+    {
+      "name": "frequency",
+      "type": {
+        "type": "long",
+        "arg.properties": {
+          "range": {"min": 20, "max": 20000}
+        }
+      }
+    },
+    {
+      "name": "volume",
+      "type": {
+        "type": "long",
+        "arg.properties": {
+          "range": {"min": 33, "max": 121}
+        }
+      }
+    },
+    {
+      "name": "sensor",
+      "type": {
+        "type": "long",
+        "arg.properties": {
+          "range": {"min": 1, "max": 20}
+        }
+      }
+    }
+  ]
+}

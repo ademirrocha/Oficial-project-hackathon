@@ -1,0 +1,15 @@
+{
+  "name": "datagen-noise-json-sensor",
+  "config": {
+    "connector.class": "io.confluent.kafka.connect.datagen.DatagenConnector",
+    "kafka.topic": "noise-json-sensor",
+    "schema.filename": "/datagen/noise.avsc",
+    "schema.keyfield": "sensor",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+    "max.interval": 10,
+    "iterations": 1000000,
+    "tasks.max": "1"
+  }
+}

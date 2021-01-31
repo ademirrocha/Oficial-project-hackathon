@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    stream:
+      kafka:
+        bindings:
+          noiseSensorConsumer-in-0:
+            consumer:
+              configuration:
+                schema.registry.url: http://schema_registry:8081
+  kafka:
+    bootstrap-servers: broker:9093

@@ -1,0 +1,7 @@
+.mapa {
+    width:100%;
+    height: calc(100% - 60px);
+    position: absolute;
+    top: 60px;
+    left: 0px;
+}
