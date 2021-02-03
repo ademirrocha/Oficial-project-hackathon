@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import io from 'socket.io-client';
+import Chart from 'chart.js';
 
 import GoogleMapReact from 'google-map-react';
 
@@ -27,6 +28,8 @@ function SimpleMap() {
   const [sensorData, setSensorData] = useState([]);
 
   useEffect(() => {
+
+    setSensorData(coordinates)
     
     socket.on('res.previous_sensor', (data) => {
 
@@ -79,7 +82,7 @@ function SimpleMap() {
   };
  
     return (
-      <div style={{ height: '100vh', width: '100%' }}>
+      <div style={{ height: '100vh', width: '40%' }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: "AIzaSyDFEVR21PUndmkFOqjv0gC-VPjecrL3NzY" }}
           defaultCenter={defaultProps.center}
