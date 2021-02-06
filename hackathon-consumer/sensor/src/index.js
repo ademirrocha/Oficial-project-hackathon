@@ -12,7 +12,7 @@ console.log(startDate.toFormat('yyyy-MM-dd HH:mm:ss'))
 
 function dataAleatoria() {
   var nowDate = DateTime.local();
-  var oldDate = nowDate.minus({hours: 2});
+  var oldDate = nowDate.minus({hours: 200});
   return DateTime.fromMillis(nowDate.valueOf() + Math.random() * (oldDate.valueOf() - nowDate.valueOf()));
 }
 
@@ -73,41 +73,29 @@ function average_sensors(calc, item) {
 
 }
 
-/*
+
 function getSensorsLastDays(days){
 
   var result = []
   var sensorsLast = []
+  var today = DateTime.fromSQL(DateTime.local().toFormat('yyyy-MM-dd'))
+  for (var i=0; i < days; i++){
 
-  if(DateTime.fromSQL(sensors[0].date).toFormat('HH:mm') != DateTime.local().toFormat('HH:mm')){
-    sensors.push({
-      latitude: sensors[0].latitude,
-      longitude: sensors[0].longitude,
-      sensor: sensors[0].sensor,
-      frequency: sensors[0].frequency,
-      volume: sensors[0].volume,
-      point_size: parseInt((sensors[0].volume + sensors[0].frequency)/300) + 'px',
-      date: DateTime.local().toFormat('yyyy-MM-dd HH:mm:ss')
-    })
-  }
-
-  for (var i=0; i < 10; i++){
-
-    sensorsLast = sensors.filter( e =>  DateTime.fromSQL(e['date']).ts < DateTime.local().minus({minutes: parseInt((i * 12)) }).ts && 
-      DateTime.fromSQL(e['date']).ts >= DateTime.local().minus({minutes: parseInt(12 + (i * 12)) }).ts  )
+    sensorsLast = sensors.filter( e =>  DateTime.fromSQL(e['date']).ts < today.minus({hours: parseInt((i * 24)) }).ts && 
+      DateTime.fromSQL(e['date']).ts >= today.minus({hours: parseInt(24 + (i * 24)) }).ts  )
 
     result[i] = {
-      date: DateTime.local().minus({minutes:  parseInt(12 + (i * 12)) }).toFormat('HH:mm') + ' a ' + DateTime.local().minus({minutes: parseInt((i * 12)) }).toFormat('HH:mm'),
+      date: today.minus({hours:  parseInt(24 + (i * 24) ) }).toFormat('dd/MM/yyyy'),
       average_volume: ( (sensorsLast.reduce(average_sensors, 0)) / sensorsLast.length).toFixed(2)
     }
 
   }
 
-  console.log('sensorsLast => ', result)
+  //console.log('sensorsLast => ', result)
 
   return result.reverse()
 }
-*/
+
 
 function getSensorsLastMinutes(minutes){
 
@@ -170,6 +158,12 @@ const run = async() => {
 
     io.in("real_time").emit("res.sensor", sensor);
     io.in("room_two_hours").emit('res.chart_sensor_last_two_hours', getSensorsLastMinutes(12))
+    io.in("room_six_hours").emit('res.chart_sensor_last_six_hours', getSensorsLastMinutes(36))
+    io.in("room_twelve_hours").emit('res.chart_sensor_last_twelve_hours', getSensorsLastMinutes(72))
+    io.in("room_twenty_four_hours").emit('res.chart_sensor_last_twenty_four_hours', getSensorsLastMinutes(144))
+    io.in("room_ten_days").emit('res.chart_sensor_last_ten_days', getSensorsLastDays(10))
+    io.in("room_five_days").emit('res.chart_sensor_last_five_days', getSensorsLastDays(5))
+    io.in("room_thirty_days").emit('res.chart_sensor_last_thirty_days', getSensorsLastDays(30))
 
     
     sensorsRealTime = sensorsRealTime.filter(function (el) {
@@ -186,7 +180,9 @@ const run = async() => {
 }
 
 io.on('connection', async socket => {
-  socket.on('room', function(room) {
+
+
+  socket.on('room', async function(room) {
     console.log('room', room)
     socket.join(room);
 
@@ -200,6 +196,26 @@ io.on('connection', async socket => {
 
     if(room === 'room_six_hours'){
       socket.emit('res.chart_sensor_last_six_hours', getSensorsLastMinutes(36))
+    }
+
+    if(room === 'room_twelve_hours'){
+      await socket.emit('res.chart_sensor_last_twelve_hours', getSensorsLastMinutes(72))
+    }
+
+    if(room === 'room_twenty_four_hours'){
+      await socket.emit('res.chart_sensor_last_twenty_four_hours', getSensorsLastMinutes(144))
+    }
+
+    if(room === 'room_five_days'){
+      await socket.emit('res.chart_sensor_last_five_days', getSensorsLastDays(5))
+    }
+
+    if(room === 'room_ten_days'){
+      await socket.emit('res.chart_sensor_last_ten_days', getSensorsLastDays(10))
+    }
+
+    if(room === 'room_thirty_days'){
+      await socket.emit('res.chart_sensor_last_thirty_days', getSensorsLastDays(30))
     }
 
   });

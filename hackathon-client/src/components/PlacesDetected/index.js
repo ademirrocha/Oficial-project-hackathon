@@ -8,6 +8,10 @@ import point5 from '../../assets/point5.svg';
 import seta from '../../assets/seta.svg';
 
 function PlacesDetected({text, size, pointer, volume, frequence}) {
+
+	
+
+
 	//console.log(size, 'point_size')
 	let point = point4
 	if(volume > frequence){
@@ -28,12 +32,12 @@ function PlacesDetected({text, size, pointer, volume, frequence}) {
 		size = '40px'
 	}
 
-  return (
-    <div>
-        <img src={point} alt="Delivery" height={size} />
-        {text}
-      </div>
-    );
-}
+	return (
+		<div>
+		<img src={point} alt="Delivery" height={size} />
+		{text}
+		</div>
+		);
+	}
 
-export default PlacesDetected;
+	export default PlacesDetected;

@@ -7,11 +7,11 @@ import socket from '../../config/socket-io.js'
 var room_real_time = "room_real_time";
 
 socket.on('connect', function() {
-       // Connected, let's sign-up for to receive messages for this room
-       socket.emit('room', room_real_time);
-       console.log('[IO] Connect => A new connection has been established')
+    // Connected, let's sign-up for to receive messages for this room
+    socket.emit('room', room_real_time);
+    console.log('[IO] Connect => A new connection has been established')
 
-   });
+});
 
 const coordinates = [
 { sensor: 1, latitude: -15.80028100253557, longitude: -46.01022300110646 },
@@ -41,32 +41,34 @@ function ViewMaps(){
 
 
 	const [latitude, setLatitude] = useState('');
-    const [longitude, setLongitude] = useState('');
+	const [longitude, setLongitude] = useState('');
 	const [sensorsMaps, setSensorsMaps] = useState([]);
+
+	
+
+
 	useEffect(() => {
 
 		navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
+			(position) => {
+				const { latitude, longitude } = position.coords;
 
-                setLatitude(latitude);
-                setLongitude(longitude);
+				setLatitude(latitude);
+				setLongitude(longitude);
 
-            },
-            (err) => {
-                console.log(err);
-            },
-            {
-                timeout: 30000,
-            }
-        )
+			},
+			(err) => {
+				console.log(err);
+			},
+			{
+				timeout: 30000,
+			}
+			)
 
-
-
-		setSensorsMaps(coordinates)
 		socket.on('res.previous_sensor', (data) => {
 			setSensorsMaps(data)
 		})
+		
 	}, []);
 
 
@@ -90,28 +92,28 @@ function ViewMaps(){
 
 		{sensorsMaps && sensorsMaps.map((point) => (
 			<PlacesDetected
-              // key={}
-              lat={point.latitude}
-              lng={point.longitude}
-              text={point.sensor}
-	          size={point.point_size}
-	          />
-	          ))}
+			// key={}
+			lat={point.latitude}
+			lng={point.longitude}
+			text={point.sensor}
+			size={point.point_size}
+			/>
+			))}
 
 			<PlacesDetected
-              // key={}
-              lat={latitude}
-              lng={longitude}
-              text=''
-	          pointer='point5'
-	         />
-	         
+			// key={}
+			lat={latitude}
+			lng={longitude}
+			text=''
+			pointer='point5'
+			/>
+			
 
-		</GoogleMapReact>
+			</GoogleMapReact>
 
-		</div>
+			</div>
 
-		)
+			)
 }
 
 export default ViewMaps;

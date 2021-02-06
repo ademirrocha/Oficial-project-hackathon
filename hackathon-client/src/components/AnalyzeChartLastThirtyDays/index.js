@@ -1,20 +1,20 @@
 import React, {useState, useEffect} from 'react';
-//import socket from '../../config/socket-io.js'
 import BarChart from '../BarChart'
-
+//import socket from '../../config/socket-io.js'
 
 import io from 'socket.io-client';
 
 const socket = io('http://localhost:8080', { transports: ['websocket', 'polling', 'flashsocket'] })
 socket.on('connect', function() {
-	socket.emit('room', 'room_six_hours')
+	socket.emit('room', 'room_thirty_days')
 })
 	// App
-	function ViewChartLastSixHours(){
+	function ViewChartLastThirtyDays(){
 
 		const [sensorsBarChart, setSensorsBarChart] = useState([]);
+		
 		useEffect(() => {
-			socket.on('res.chart_sensor_last_six_hours', (data) => {
+			socket.on('res.chart_sensor_last_thirty_days', (data) => {
 				setSensorsBarChart(data);
 			})
 
@@ -22,8 +22,8 @@ socket.on('connect', function() {
 
 		return (
 			<>
-			<div className="sub chart-wrapper">
-			<span>Análise do som nas últimas 6 Horas</span>
+			<div className="main chart-wrapper">
+			<span>Análise do som nos últimos 30 Dias</span>
 			<BarChart
 			data={sensorsBarChart}
 			title="volume do som"
@@ -34,4 +34,4 @@ socket.on('connect', function() {
 			);
 	}
 
-	export default ViewChartLastSixHours;
+	export default ViewChartLastThirtyDays;
