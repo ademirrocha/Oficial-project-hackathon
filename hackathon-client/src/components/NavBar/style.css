@@ -1,0 +1,64 @@
+nav {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: bold;
+    height: 60px;
+
+    
+}
+
+nav ul {
+    
+    display: flex;
+    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    
+    list-style: none;
+}
+
+nav ul li {
+    padding-left: 20px;
+    line-height: 30px;
+    height: 30px;
+    
+}
+
+li.menu-item a {
+    color: #092ca1;
+    font-size: 21px;
+    text-decoration: none;
+}
+
+.brand{
+    position: absolute;
+    direction: row;
+    left: 20px;
+}
+
+.menu-item-notify{
+    position: absolute;
+    right: 50px;
+}
+
+.notificationBadge{
+    position: absolute;
+    background: #FF0000;
+    border-radius: 50%;
+    width: 30px !important;
+    height: 30px !important;
+    text-align: center;
+    align-items: center;
+    color: #fff;
+    transition: 0.7s;
+}
+
+.notificationBadge::change{
+    transform: 1.5%;
+    
+}
+.notificationBadge::hover{
+    transform: 1.5;
+    
+}
