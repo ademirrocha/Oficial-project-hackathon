@@ -169,7 +169,7 @@ const run = async() => {
     }
 
     io.in("real_time").emit("res.sensor", sensor);
-    io.in("room_two_hours").emit('res.bar_chart_sensor', getSensorsLastMinutes(12))
+    io.in("room_two_hours").emit('res.chart_sensor_last_two_hours', getSensorsLastMinutes(12))
 
     
     sensorsRealTime = sensorsRealTime.filter(function (el) {
@@ -195,11 +195,11 @@ io.on('connection', async socket => {
     }
 
     if(room === 'room_two_hours'){
-      socket.emit('res.bar_chart_sensor', getSensorsLastMinutes(12))
+      socket.emit('res.chart_sensor_last_two_hours', getSensorsLastMinutes(12))
     }
 
     if(room === 'room_six_hours'){
-      socket.emit('res.bar_chart_sensor', getSensorsLastMinutes(36))
+      socket.emit('res.chart_sensor_last_six_hours', getSensorsLastMinutes(36))
     }
 
   });
