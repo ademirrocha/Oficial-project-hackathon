@@ -1,0 +1,1 @@
+web: node --harmony hackathon-client/src/index
