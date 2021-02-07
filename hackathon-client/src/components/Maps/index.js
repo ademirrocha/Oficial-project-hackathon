@@ -11,6 +11,24 @@ socket.on('connect', function() {
     socket.emit('room', room_real_time);
     console.log('[IO] Connect => A new connection has been established')
 
+   
+    navigator.geolocation.getCurrentPosition(
+    	(position) => {
+    		const { latitude, longitude }= position.coords;
+
+    		 socket.emit('my_position', {latitude: latitude , longitude: longitude})
+
+    	},
+    	(err) => {
+    		console.log(err);
+    	},
+    	{
+    		timeout: 30000,
+    	}
+    	)
+
+   
+
 });
 
 const coordinates = [
@@ -104,7 +122,7 @@ function ViewMaps(){
 			// key={}
 			lat={latitude}
 			lng={longitude}
-			text=''
+			text='Sua Localização'
 			pointer='point5'
 			/>
 			

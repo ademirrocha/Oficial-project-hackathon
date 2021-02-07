@@ -1,13 +1,12 @@
 const express = require('express')
 const path = require('path')
 var fs = require("fs");
+const { Kafka } = require('kafkajs')
+
 const { DateTime } = require("luxon");
 DateTime.local().setZone('America/Sao_Paulo');
 
 let startDate = DateTime.local();
-
-console.log(startDate.toISODate())
-console.log(startDate.toFormat('yyyy-MM-dd HH:mm:ss'))
 
 
 function dataAleatoria() {
@@ -28,14 +27,17 @@ app.use(function(req, res, next) {
 
 const server = require('http').createServer(app)
 const io = require('socket.io')(server)
-const { Kafka } = require('kafkajs')
 
-/*
+
+
 const kafka = new Kafka({
   clientId: 'my-app',
   brokers: ['localhost:9092']
 })
-*/
+
+
+var all_sockets = []
+
 var sensors = []
 var sensorsRealTime = []
 
@@ -58,8 +60,7 @@ if(sensors.length == 0){
     hasMagenicVendor = sensorsRealTime.some( e => e['sensor'] === s['sensor'] )
 
     if(hasMagenicVendor == false && sensorsRealTime.length < 20){
-      sensorsRealTime.push(s)
-      
+      sensorsRealTime.push(s)      
     }
 
   })
@@ -67,10 +68,21 @@ if(sensors.length == 0){
 }
 
 function average_sensors(calc, item) {
-
   return  calc + item.volume
+}
 
-
+function getDistanceFromLatLonInKm(position1, position2) {
+  "use strict";
+  var deg2rad = function (deg) { return deg * (Math.PI / 180); },
+  R = 6371,
+  dLat = deg2rad(position2.lat - position1.lat),
+  dLng = deg2rad(position2.lng - position1.lng),
+  a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+  + Math.cos(deg2rad(position1.lat))
+  * Math.cos(deg2rad(position1.lat))
+  * Math.sin(dLng / 2) * Math.sin(dLng / 2),
+  c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return ((R * c *1000).toFixed());
 }
 
 
@@ -91,7 +103,6 @@ function getSensorsLastDays(days){
 
   }
 
-  //console.log('sensorsLast => ', result)
 
   return result.reverse()
 }
@@ -126,15 +137,13 @@ function getSensorsLastMinutes(minutes){
 
   }
 
-  //console.log('sensorsLast => ', result)
-
   return result.reverse()
 }
 
 
 
 
-//const consumer = kafka.consumer({ groupId: 'test-group' })
+const consumer = kafka.consumer({ groupId: 'test-group' })
 
 const run = async() => {
 
@@ -157,6 +166,27 @@ const run = async() => {
     }
 
     io.in("real_time").emit("res.sensor", sensor);
+
+
+    for(var socket in all_sockets){
+
+      var distancia = (getDistanceFromLatLonInKm(
+       {lat: all_sockets[socket].latitude, lng: all_sockets[socket].longitude},
+       {lat: sensor.latitude, lng: sensor.longitude}
+       ));
+
+      console.log(distancia);
+
+      if(distancia <= 1000 && sensor.volume >= 50){
+
+        io.to(all_sockets[socket].id).emit('res.notify', {
+          date: DateTime.local().toFormat('dd/MM/yyyy | HH:mm:ss'),
+          author: 'Alerta',
+          message: 'Você está em uma área onde há uma grande quantidade de poluíção sonora. \nPara não prejudicar sua saúde é recomendado que se afaste para outra localidade.'
+        })
+      }
+    }
+
     io.in("room_two_hours").emit('res.chart_sensor_last_two_hours', getSensorsLastMinutes(12))
     io.in("room_six_hours").emit('res.chart_sensor_last_six_hours', getSensorsLastMinutes(36))
     io.in("room_twelve_hours").emit('res.chart_sensor_last_twelve_hours', getSensorsLastMinutes(72))
@@ -164,6 +194,7 @@ const run = async() => {
     io.in("room_ten_days").emit('res.chart_sensor_last_ten_days', getSensorsLastDays(10))
     io.in("room_five_days").emit('res.chart_sensor_last_five_days', getSensorsLastDays(5))
     io.in("room_thirty_days").emit('res.chart_sensor_last_thirty_days', getSensorsLastDays(30))
+    
 
     
     sensorsRealTime = sensorsRealTime.filter(function (el) {
@@ -181,9 +212,8 @@ const run = async() => {
 
 io.on('connection', async socket => {
 
-
   socket.on('room', async function(room) {
-    console.log('room', room)
+
     socket.join(room);
 
     if(room === 'room_real_time'){
@@ -220,14 +250,64 @@ io.on('connection', async socket => {
 
   });
 
-  console.log('Socket conectado: ', socket.id)
+  socket.on('my_position', function(position){
+
+
+    all_sockets.push({
+      id: socket.id,
+      latitude: position.latitude,
+      longitude: position.longitude,
+    })
+
+    /*  para testes sem o kafka rodando
+    for(var socket_in in all_sockets){
+      console.log('socket_in => ', all_sockets[socket_in])
+
+      if(all_sockets[socket_in].id === socket.id ){
+        var res = false
+        for(s in sensorsRealTime){
+
+          var distancia = (getDistanceFromLatLonInKm(
+           {lat: all_sockets[socket_in].latitude, lng: all_sockets[socket_in].longitude},
+           {lat: sensorsRealTime[s].latitude, lng: sensorsRealTime[s].longitude}
+           ));
+
+          console.log('sensor => ', sensorsRealTime[s].sensor , ' | distancia => ', distancia, ' volume => ', sensorsRealTime[s].volume);
+
+          if(distancia <= 1000 && sensorsRealTime[s].volume >= 50){
+
+            console.log('sensor => ', sensorsRealTime[s].sensor , ' | distancia => ', distancia, ' volume => ', sensorsRealTime[s].volume);
+
+           res = true
+          }
+
+        }
+
+        if(res){
+
+           io.to(all_sockets[socket_in].id).emit('res.notify', {
+              date: DateTime.local().toFormat('dd/MM/yyyy | HH:mm:ss'),
+              author: 'Alerta',
+              message: 'Você está em uma área onde há uma grande quantidade de poluíção sonora. \nPara não prejudicar sua saúde é recomendado que se afaste para outra localidade.'
+            })
+
+        }
+        
+      }
+    }
+
+    */
+
+  })
+
   
   socket.on('disconnect', () => {
-    console.log('[SOCKET] Disconnect => A connection was disconnected')
+
+
   })
 
   socket.on('forceDisconnectRoom', function(room){
-    //console.log('lastRoom => ', room)
+
     //socket.disconnect();
     socket.emit('level_disconnected')
     //socket.leave(room);

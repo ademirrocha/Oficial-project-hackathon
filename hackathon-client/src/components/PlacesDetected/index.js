@@ -18,16 +18,16 @@ function PlacesDetected({text, size, pointer, volume, frequence}) {
 		point = point2
 	}else if(volume < frequence){
 		point = point3
-	}else if(volume == frequence){
+	}else if(volume === frequence){
 		point = point1
 	}
 
 
-	if(pointer == 'point5'){
+	if(pointer === 'point5'){
 		point = point5
 		size = '32px'
 	}
-	if(pointer == 'seta'){
+	if(pointer === 'seta'){
 		point = seta
 		size = '40px'
 	}

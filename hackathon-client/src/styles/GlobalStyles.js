@@ -72,4 +72,29 @@ nav{
 display: inline-block;
 }
 
+.notifications{
+	position: absolute;
+	right: 10px;
+	background: #D4CECE;
+	border-radius: 5px;
+	width: 350px;
+	height: 400px;
+	z-index: 99999;
+	overflow: auto;
+	padding: 10px;
+}
+
+.notification{
+	background: #E5E8EC;
+	padding: 5px;
+}
+
+.notification.date{
+	font-size: 13px;
+}
+
+.strong{
+	font-weight: bold;
+}
+
 `;
