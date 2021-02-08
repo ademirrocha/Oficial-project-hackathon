@@ -33,15 +33,6 @@ Os dados dos sensores no exemplo são coletados e agrupados em um tópico do Kaf
 
 Para iniciar a simulação da coleta de dados dos sensores:
 
-```
-curl -X POST http://localhost:8083/connectors -H 'Content-Type:application/json' -H 'Accept:application/json' -d @hackathon-service/src/main/resources/avro/noise.json
-```
-
-Para parar a simulação da coleta de dados dos sensores:
-
-```
-curl -X DELETE http://localhost:8083/connectors/datagen-noise-sensor
-```
 
 Pode-se optar pelo uso de json na coleta de dados dos sensores:
 
@@ -117,34 +108,38 @@ Para fazer a integração com o php pode ser usada o [PHP Client](https://github
 ## Projeto de exemplo
 
 Para iniciar o Projeto de exemplo
+## Pre-requisitos
 
 ```
-docker-compose up hackathon-service
-docker-compose up hackathon-client
+NodeJs 10
+Yarn ou npm
+```
+
+cd hackathon-consumer/sensor 
+
+```
+# yarn install //para instalar as dependencias
+# yarn start  //para iniciar o consumer
+```
+
+
+cd hackathon-client
+
+```
+# yarn install //para instalar as dependencias
+# yarn start  //para iniciar o cliente
 ```
 
 Endereços:
 
-* [Client](http://localhost:4200)
-* [Service](http://localhost:8080)
+* [Cliente](http://localhost:3000)
 
-## Elasticsearch e Kibana
-
-O Elasticsearch com o Kibana pode ser usado para a visualização dos dados e armazenamento dos dados
-
-```
-docker-compose up elasticsearch kibana
-```
-
-Endereços:
-
-* [Elasticsearch](http://localhost:9200)
-* [Kibana](http://localhost:5601)
-
-## Documentação
 
 Tecnologias:
 
+* [ReactJS](https://reactjs.org/docs/getting-started.html)
+* [Socket.io](https://socket.io/docs/v3/index.html)
+* [NodeJS](https://nodejs.org/en/docs/)
 * [@angular](https://angular.io/docs)
 * [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/html/)
 * [Spring Cloud Stream](https://docs.spring.io/spring-cloud-stream/docs/3.1.0/reference/html/)

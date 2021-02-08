@@ -156,8 +156,7 @@ services:
     container_name: hackathon-client
     image: node:10
     entrypoint: /app/entrypoint.sh
-    depends_on:
-      - hackathon-service
+    
     networks:
       - lan
     ports:

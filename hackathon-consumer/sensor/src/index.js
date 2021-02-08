@@ -195,7 +195,7 @@ const run = async() => {
     io.in("room_five_days").emit('res.chart_sensor_last_five_days', getSensorsLastDays(5))
     io.in("room_thirty_days").emit('res.chart_sensor_last_thirty_days', getSensorsLastDays(30))
     
-
+    console.log(sensor)
     
     sensorsRealTime = sensorsRealTime.filter(function (el) {
       return el.sensor != sensor.sensor;
@@ -252,14 +252,14 @@ io.on('connection', async socket => {
 
   socket.on('my_position', function(position){
 
-
+    console.log(position)
     all_sockets.push({
       id: socket.id,
       latitude: position.latitude,
       longitude: position.longitude,
     })
 
-    /*  para testes sem o kafka rodando
+    
     for(var socket_in in all_sockets){
       console.log('socket_in => ', all_sockets[socket_in])
 
@@ -274,7 +274,7 @@ io.on('connection', async socket => {
 
           console.log('sensor => ', sensorsRealTime[s].sensor , ' | distancia => ', distancia, ' volume => ', sensorsRealTime[s].volume);
 
-          if(distancia <= 1000 && sensorsRealTime[s].volume >= 50){
+          if(distancia <= 10000 && sensorsRealTime[s].volume >= 50){
 
             console.log('sensor => ', sensorsRealTime[s].sensor , ' | distancia => ', distancia, ' volume => ', sensorsRealTime[s].volume);
 
@@ -282,6 +282,7 @@ io.on('connection', async socket => {
           }
 
         }
+
 
         if(res){
 
@@ -295,8 +296,6 @@ io.on('connection', async socket => {
         
       }
     }
-
-    */
 
   })
 
@@ -319,5 +318,5 @@ io.on('connection', async socket => {
 
 //run().catch(console.error)
 
-server.listen(8080)
+server.listen(8089)
 

@@ -16,7 +16,8 @@ socket.on('connect', function() {
     	(position) => {
     		const { latitude, longitude }= position.coords;
 
-    		 socket.emit('my_position', {latitude: latitude , longitude: longitude})
+    		 //socket.emit('my_position', {latitude: latitude , longitude: longitude})
+    		 socket.emit('my_position', {latitude: -15.9054 , longitude: -46.1088})
 
     	},
     	(err) => {
@@ -70,9 +71,8 @@ function ViewMaps(){
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
 				const { latitude, longitude } = position.coords;
-
-				setLatitude(latitude);
-				setLongitude(longitude);
+				setLatitude(-15.9054);
+				setLongitude(-46.1088);
 
 			},
 			(err) => {
